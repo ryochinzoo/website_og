@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-Frame-Options" content="allow">
+<meta property="og:title" content="OVALGAMES" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="" />
+<meta property="og:image" content="img/ogp_image.png" />
+<meta name="Author" content="OVALGAMES.Inc.">
+<meta name="copyright" content="OVALGAMES.Inc.">
+<meta name="keywords" content="" lang="ja">
+<meta name="description" content="">
+<!--meta tags-->
+
+<title>OVALGAMES INC.</title>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script src="js/colorbox/jquery.colorbox.js"></script>
+<link rel="stylesheet" type="text/css" href="js/colorbox/example1/colorbox.css">
+
+<link rel="stylesheet" type="text/css" href="css/style.css">
+<link rel="shortcut icon" href="img/favicon.ico" type="image/vnd.microsoft.icon">
+<script src="https://code.createjs.com/createjs-2015.11.26.min.js"></script>
+
+
+<script>
+var clse;
+var linkedpages = ["vision.html", "recruit.html", "corporate.html", "service.html"];
+window.addEventListener("load",init);
+function init(){
+	var w = $('.wrapper').width();
+	var h = $('.wrapper').height();
+	$('#particles').attr('width', w);
+	$('#particles').attr('height', h);
+	var stage = new createjs.Stage("particles");
+	
+	var angle = 0;
+	var centerHue = 214;
+	var radius = 17;
+	var speed = 0.05;
+	var particles = [];
+	var boxfilter = new createjs.BlurFilter(0, 0, 0);
+	
+	createjs.Ticker.addEventListener("tick", handleTick);
+	
+	function handleTick(event){
+		
+		emitParticles();
+		updateParticles();
+		
+		stage.update();
+		
+	}
+	var count_for_update = 0;
+	var count = 0;
+	var MAX_LIFE = 450;
+	var changeflag = true;
+	
+	function emitParticles(){
+	count += 1;
+	if(count % 17 == 0){
+		for(var i = 0; i < 4; i++){
+			
+			
+			var particle = new createjs.Shape();
+			
+			particle.compositeOperation = "lighter";
+			
+			particle.y = stage.canvas.height - 120;
+			
+			var luminance = (Math.floor(Math.random() * 3) + 5.5) * 10;
+			
+			switch(i){
+				case 0:
+					var size = Math.random() *  120 + 30;
+					particle.x = Math.floor(stage.canvas.width / 2 * Math.random()) - 200;
+					particle.vx = 3 * (Math.random() - 0.5);
+					particle.vy = 12 * (Math.random() - 0.5);
+					particle.life = MAX_LIFE;
+					break;
+				case 1:
+					if(count % 3 == 0){
+						var size = 100;
+						particle.x = Math.floor(stage.canvas.width / 2) - size / 2;
+						particle.vx = 1 * (Math.random() - 0.5);
+						particle.vy = 1.2 * (Math.random() - 0.5);
+						particle.life = 250;
+				
+						break;
+					}else if(count % 3 == 1){
+						var size = 120;
+						particle.x = Math.floor(stage.canvas.width / 2 - 250);
+						particle.vx = 10 * (Math.sin(60));
+						particle.vy = 1.2 * (Math.cos(60));
+						particle.life = 400;
+						break;
+					}else{
+						particle.life = 0;
+						break;
+					}
+				case 2:
+					var size = Math.random() *  120 + 30;
+					particle.x = Math.floor(stage.canvas.width / 2 * Math.random() + stage.canvas.width / 2) + 100;
+					particle.vx = 3 * (Math.random() - 0.5);
+					particle.vy = 10 * (Math.random() - 0.5);
+					particle.life = MAX_LIFE;
+					break;
+				case 3:
+					if(count % 4 == 0){
+						var size = 100;
+						particle.x = Math.floor(stage.canvas.width / 2 - 200);
+						particle.vx = 10 * (Math.random() - 0.5);
+						particle.vy = 12 * (Math.random() - 0.5);
+						particle.life = MAX_LIFE;
+						break;
+					}else if(count % 4 == 1){
+						var size = 180;
+						particle.x = Math.floor(stage.canvas.width / 2 + 100);
+						particle.vx = -10 * (Math.sin(60));
+						particle.vy = 12 * (Math.cos(60));
+						particle.life = 400;
+						break;
+					}else{
+						particle.life = 0;
+						break;
+					}
+				}
+			
+			particle.hue = 190;
+			var hue = particle.hue;
+			var color = "hsl("  + hue + " , 100%,"+ luminance + "%)";
+			
+			particle.luminance = luminance;
+			particle.size = size;
+			particle.graphics.beginFill(color).drawRoundRect(0, 0, size, size, 5);
+			boxfilter.blurX = boxfilter.blurY = particle.size/2;
+			particle.filters = [boxfilter];
+			var margins = boxfilter.getBounds();
+			stage.addChild(particle);
+			
+			particle.alpha = 0;
+			createjs.Tween.get(particle).to({alpha:1}, 1000);
+			
+			particles.push(particle);
+			
+		}
+	}
+	}
+
+	
+	function updateParticles(){
+		count_for_update++;
+		for (var i = 0; i < particles.length; i++) {
+			var particle = particles[i];
+			particle.vy -= 1.3;
+			particle.vx *= 0.98;
+			particle.vy *= 0.86;
+			
+			if(count_for_update % 3 == 0){
+			
+				particle.hue += 0.96;
+				var hue = particle.hue;
+				var color = "hsl("  + hue + "0 , 100%,"+ particle.luminance + "%)";
+				particle.graphics.clear().beginFill(color).drawRoundRect(0, 0, particle.size, particle.size, 5);
+			}
+			
+			particle.x += particle.vx * 0.4;
+			particle.y += particle.vy * 0.4;
+			
+			var scale = particle.life / MAX_LIFE;
+			particle.scaleX = particle.scaleY = scale;
+			
+			particle.life -= 2;
+			
+			
+			
+			if(particle.life <= 120){
+				createjs.Tween.get(particle).to({alpha:0}, 1000);
+			}
+			if(particle.life <= 0){
+				stage.removeChild(particle);
+				particles.splice(i, 1);
+			}
+		}
+		window.addEventListener('resize', function() {
+			var w = $('.wrapper').width();
+			var h = $('.wrapper').height();
+			$('#particles').attr('width', w);
+			$('#particles').attr('height', h);
+      }, false );
+	}
+	
+}
+
+</script>
+
+<script type="text/javascript">
+
+var listenEvents = [
+    'webkitAnimationEnd', // webkit(Chrome1.0, Safari3.2)
+    'oAnimationEnd',      // Opera10.5
+    'oanimationend',      // Opera12
+    'animationend'        // IE10, Fx4以降, 12.10以降
+];
+
+function cbox(url){
+	var href = url;
+	$.fn.colorbox({
+		width: "700px",
+		height: "450px",
+		href:href,
+		iframe: false,
+		scrolling: "auto",
+		
+	});
+}
+var se =new Audio('src/se.mp3');
+var clse = new Audio('src/click.mp3');
+clse.volume = 0.25;
+function startbutton(){
+		se.currentTime = 0;
+		$("#st_logo").css("display","none");
+		se.play();
+		$("#crt").addClass('crtoff').on(listenEvents.join(' '), function() {
+			$("#st_logo").css("display","none");
+			$("#crt").removeClass('crtoff');
+			$("#logo").css("display","block");
+			$("#h_wrapper").css("display","block");
+		}); 
+
+}
+function movefirst(){
+		se.currentTime = 0;
+		se.play();
+		$("#logo").css("display","none");
+		$("#h_wrapper").css("display","none");
+		$("#page").css("display","none");
+		$("#iframeid").css("display","none");
+		
+		$("#crt").addClass('crton').on(listenEvents.join(' '), function() {
+			$("#logo").css("display","none");
+			$("#h_wrapper").css("display","none");
+			$("#page").css("display","none");
+			$("#iframeid").css("display","none");
+			$("#st_logo").css("display","block");
+			$("#crt").removeClass('crton');
+			$("#vision img").attr('src', 'img/menu_vision.png');
+			$("#corporate img").attr('src', 'img/menu_corporate.png');
+			$("#service img").attr('src', 'img/menu_service.png');
+			$("#recruit img").attr('src', 'img/menu_recruit.png');
+			$("#contact img").attr('src', 'img/menu_contact.png');
+		}); 
+
+}
+function sound(){
+		clse.currentTime = 0;
+		clse.play();
+		$("#iframename").remove();
+		$("#page").css('display','none');
+		$("#vision img").attr('src', 'img/menu_vision.png');
+		$("#corporate img").attr('src', 'img/menu_corporate.png');
+		$("#service img").attr('src', 'img/menu_service.png');
+		$("#recruit img").attr('src', 'img/menu_recruit.png');
+		$("#contact img").attr('src', 'img/menu_c_contact.png');
+}
+
+function onClick( event ){
+		clse.currentTime = 0;
+		clse.play();
+		switch(event){
+			case 0:
+				$("#vision img").attr('src', 'img/menu_c_vision.png');
+				$("#corporate img").attr('src', 'img/menu_corporate.png');
+				$("#service img").attr('src', 'img/menu_service.png');
+				$("#recruit img").attr('src', 'img/menu_recruit.png');
+				$("#contact img").attr('src', 'img/menu_contact.png');
+				break;
+			case 1:
+				$("#vision img").attr('src', 'img/menu_vision.png');
+				$("#corporate img").attr('src', 'img/menu_corporate.png');
+				$("#service img").attr('src', 'img/menu_service.png');
+				$("#recruit img").attr('src', 'img/menu_c_recruit.png');
+				$("#contact img").attr('src', 'img/menu_contact.png');
+				break;
+			case 2:
+				$("#vision img").attr('src', 'img/menu_vision.png');
+				$("#corporate img").attr('src', 'img/menu_c_corporate.png');
+				$("#service img").attr('src', 'img/menu_service.png');
+				$("#recruit img").attr('src', 'img/menu_recruit.png');
+				$("#contact img").attr('src', 'img/menu_contact.png');
+				break;
+			case 3:
+				$("#vision img").attr('src', 'img/menu_vision.png');
+				$("#corporate img").attr('src', 'img/menu_corporate.png');
+				$("#service img").attr('src', 'img/menu_c_service.png');
+				$("#recruit img").attr('src', 'img/menu_recruit.png');
+				$("#contact img").attr('src', 'img/menu_contact.png');
+				break;
+		
+		}
+		$("#page").css("display","block");
+		$("#iframeid").css("display","block");
+		$("#iframeid").html('<iframe id="iframename" src="' + linkedpages[event] + '?1" width="' + 820 + '" height="' + 480 + '"scrolling="yes"></iframe>');
+	}
+
+
+</script>
+<script type="text/javascript">
+if ((navigator.userAgent.indexOf('iPhone') > 0 && navigator.userAgent.indexOf('iPad') == -1) || navigator.userAgent.indexOf('iPod') > 0 || navigator.userAgent.indexOf('Android') > 0) {
+	location.href = './sp/';
+}
+</script>
+</head>
+<body>
+<div class="pointer" id="st_logo"><img onclick="startbutton();" src="img/st_logo.png" width="350" border="0"></div>
+
+	<div id="logo" class="pointer" ><img onclick="movefirst();" src="img/logo.png" width="150" border="0"></div>
+	<div id="h_wrapper" class="header">
+		<div id="menu">
+			<div id="vision" class="menu"><img onclick="onClick(0);" src="img/menu_vision.png" /></div>
+			<div id="corporate" class="menu long"><img onclick="onClick(2);" src="img/menu_corporate.png" /></div>
+			<div id="service" class="menu"><img onclick="onClick(3);" src="img/menu_service.png" /></div>
+			<div id="recruit" class="menu"><img onclick="onClick(1);" src="img/menu_recruit.png" /></div>
+			<div id="contact" class="menu"><a href="mailto:info@ovalgames.co.jp"><img onclick="(sound());" src="img/menu_contact.png" border="0"/></a></div>
+		</div>
+</div>
+
+<div style="clear:both"></div>
+<div id="crt"></div>
+<div id="page"></div>
+<div id="iframeid"></div>
+<div class="wrapper"></div>
+<canvas id="particles"></canvas>
+
+<footer>
+<div id="footline">
+		<div id="f_wrapper"><img src="img/footer_inc.png" width="200"/></div>
+	</div>
+</footer>
+</body>
+</html>
